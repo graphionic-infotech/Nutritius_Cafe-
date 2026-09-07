@@ -46,46 +46,157 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (hamburgerBtn && mainNav) {
     hamburgerBtn.addEventListener('click', () => {
-      mainNav.classList.toggle('active');
+      const isOpen = mainNav.classList.toggle('active');
+      hamburgerBtn.classList.toggle('active', isOpen);
+      hamburgerBtn.setAttribute('aria-expanded', isOpen);
     });
 
-    // Close menu when a link is clicked
+    // Close menu when a nav link is clicked
     mainNav.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', () => {
         mainNav.classList.remove('active');
+        hamburgerBtn.classList.remove('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
       });
     });
-  }
 
-  // --- 4. Interactive Menu Category Filtering & Jain Switch ---
-  const menuTabs = document.querySelectorAll('.tab-btn');
-  const jainToggle = document.getElementById('jainFilterToggle');
-  const menuCards = document.querySelectorAll('.menu-row-card');
-
-  let activeCategory = 'all';
-
-  function filterMenuItems() {
-    const isJainOnly = jainToggle.checked;
-
-    menuCards.forEach(card => {
-      const cardCategory = card.getAttribute('data-category');
-      const isCardJain = card.getAttribute('data-jain') === 'true';
-
-      const matchesCategory = (activeCategory === 'all' || cardCategory === activeCategory);
-      const matchesJain = !isJainOnly || isCardJain;
-
-      if (matchesCategory && matchesJain) {
-        card.style.display = 'flex';
-      } else {
-        card.style.display = 'none';
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!mainNav.contains(e.target) && !hamburgerBtn.contains(e.target) && mainNav.classList.contains('active')) {
+        mainNav.classList.remove('active');
+        hamburgerBtn.classList.remove('active');
+        hamburgerBtn.setAttribute('aria-expanded', 'false');
       }
     });
   }
 
+  // --- 4. Interactive Menu Filtering, Real-Time Search & Jain Switch ---
+  const menuTabs = document.querySelectorAll('.tab-btn');
+  const jainToggle = document.getElementById('jainFilterToggle');
+  const menuCards = document.querySelectorAll('.menu-row-card');
+  const searchInput = document.getElementById('menuSearchInput');
+  const clearSearchBtn = document.getElementById('clearSearchBtn');
+  const resultsCount = document.getElementById('resultsCount');
+  const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+  const emptyState = document.getElementById('menuEmptyState');
+  const emptyResetBtn = document.getElementById('emptyResetBtn');
+
+  let activeCategory = 'all';
+
+  function updateCategoryCounts() {
+    const isJainOnly = jainToggle ? jainToggle.checked : false;
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+    const categories = ['all', 'pizzas', 'sizzlers', 'pastas', 'mexican', 'shakes'];
+    const counts = { all: 0, pizzas: 0, sizzlers: 0, pastas: 0, mexican: 0, shakes: 0 };
+
+    menuCards.forEach(card => {
+      const cardCategory = card.getAttribute('data-category');
+      const isCardJain = card.getAttribute('data-jain') === 'true';
+      const name = card.querySelector('.menu-row-name')?.textContent.toLowerCase() || '';
+      const desc = card.querySelector('.menu-row-desc')?.textContent.toLowerCase() || '';
+
+      const matchesJain = !isJainOnly || isCardJain;
+      const matchesSearch = !query || name.includes(query) || desc.includes(query);
+
+      if (matchesJain && matchesSearch) {
+        counts.all++;
+        if (counts[cardCategory] !== undefined) {
+          counts[cardCategory]++;
+        }
+      }
+    });
+
+    categories.forEach(cat => {
+      const countEl = document.getElementById(`count-${cat}`);
+      if (countEl) {
+        countEl.textContent = counts[cat];
+      }
+    });
+  }
+
+  function filterMenuItems() {
+    const isJainOnly = jainToggle ? jainToggle.checked : false;
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+    if (clearSearchBtn) {
+      clearSearchBtn.style.display = query ? 'flex' : 'none';
+    }
+
+    let visibleCount = 0;
+
+    menuCards.forEach(card => {
+      const cardCategory = card.getAttribute('data-category');
+      const isCardJain = card.getAttribute('data-jain') === 'true';
+      const name = card.querySelector('.menu-row-name')?.textContent.toLowerCase() || '';
+      const desc = card.querySelector('.menu-row-desc')?.textContent.toLowerCase() || '';
+
+      const matchesCategory = (activeCategory === 'all' || cardCategory === activeCategory);
+      const matchesJain = !isJainOnly || isCardJain;
+      const matchesSearch = !query || name.includes(query) || desc.includes(query);
+
+      if (matchesCategory && matchesJain && matchesSearch) {
+        card.style.display = 'flex';
+        card.classList.remove('card-animate-in');
+        // trigger reflow for smooth re-animation
+        void card.offsetWidth;
+        card.classList.add('card-animate-in');
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+        card.classList.remove('card-animate-in');
+      }
+    });
+
+    // Update Tab Counts
+    updateCategoryCounts();
+
+    // Update Result Feedback
+    if (resultsCount) {
+      if (visibleCount === menuCards.length && !isJainOnly && !query && activeCategory === 'all') {
+        resultsCount.textContent = `Showing all ${visibleCount} creations`;
+      } else {
+        const catName = activeCategory === 'all' ? 'All' : (document.querySelector(`.tab-btn[data-category="${activeCategory}"] .tab-name`)?.textContent || activeCategory);
+        let statusText = `Showing ${visibleCount} dish${visibleCount === 1 ? '' : 'es'}`;
+        if (activeCategory !== 'all') statusText += ` in ${catName}`;
+        if (isJainOnly) statusText += ` • 100% Jain`;
+        if (query) statusText += ` for "${query}"`;
+        resultsCount.textContent = statusText;
+      }
+    }
+
+    // Toggle Reset Button
+    const isFiltered = activeCategory !== 'all' || isJainOnly || !!query;
+    if (resetFiltersBtn) {
+      resetFiltersBtn.style.display = isFiltered ? 'inline-flex' : 'none';
+    }
+
+    // Toggle Empty State
+    if (emptyState) {
+      emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+  }
+
+  function resetAllFilters() {
+    activeCategory = 'all';
+    menuTabs.forEach(t => {
+      const isAll = t.getAttribute('data-category') === 'all';
+      t.classList.toggle('active', isAll);
+      t.setAttribute('aria-selected', isAll ? 'true' : 'false');
+    });
+    if (jainToggle) jainToggle.checked = false;
+    if (searchInput) searchInput.value = '';
+    filterMenuItems();
+  }
+
   menuTabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      menuTabs.forEach(t => t.classList.remove('active'));
+      menuTabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
       tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
       activeCategory = tab.getAttribute('data-category');
       filterMenuItems();
     });
@@ -94,6 +205,29 @@ document.addEventListener('DOMContentLoaded', () => {
   if (jainToggle) {
     jainToggle.addEventListener('change', filterMenuItems);
   }
+
+  if (searchInput) {
+    searchInput.addEventListener('input', filterMenuItems);
+  }
+
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.focus();
+      filterMenuItems();
+    });
+  }
+
+  if (resetFiltersBtn) {
+    resetFiltersBtn.addEventListener('click', resetAllFilters);
+  }
+
+  if (emptyResetBtn) {
+    emptyResetBtn.addEventListener('click', resetAllFilters);
+  }
+
+  // Initial count calculation on load
+  updateCategoryCounts();
 
   // --- 5. Verified Customer Reviews Slider ---
   const reviews = [
@@ -186,16 +320,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4500);
   };
 
-  if (reservationModal && headerBookBtn) {
-    headerBookBtn.addEventListener('click', () => {
-      reservationModal.showModal();
-      // Set default date to today
-      const today = new Date().toISOString().split('T')[0];
-      const dateInput = document.getElementById('resDate');
-      if (dateInput && !dateInput.value) {
-        dateInput.value = today;
-      }
-    });
+  const mobileBookBtn = document.getElementById('mobileBookBtn');
+
+  const openReservationModal = () => {
+    if (!reservationModal) return;
+    if (mainNav) mainNav.classList.remove('active');
+    if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+    reservationModal.showModal();
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('resDate');
+    if (dateInput && !dateInput.value) {
+      dateInput.value = today;
+    }
+  };
+
+  if (reservationModal) {
+    if (headerBookBtn) headerBookBtn.addEventListener('click', openReservationModal);
+    if (mobileBookBtn) mobileBookBtn.addEventListener('click', openReservationModal);
 
     if (closeModalBtn) {
       closeModalBtn.addEventListener('click', () => {
