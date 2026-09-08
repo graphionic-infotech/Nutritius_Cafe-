@@ -218,38 +218,236 @@ button, input, select, textarea {
   left: 0;
   width: 100%;
   z-index: 1000;
-  padding: 1.1rem 0;
+  padding: 0.85rem 0;
   transition: all var(--transition-smooth);
 }
 
 .site-header.scrolled {
-  padding: 0.65rem 0;
+  padding: 0.55rem 0;
   background: var(--glass-dark-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--glass-dark-border);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.header-container {
+  display: flex;
+  flex-direction: column;
 }
 
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.4rem;
+  width: 100%;
   flex-wrap: nowrap;
-  white-space: nowrap;
 }
 
+/* 1. Prominent Café Brand Logo & Name */
 .brand-logo {
   display: flex;
   align-items: center;
-  height: 48px;
+  gap: 1.05rem;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.brand-logo:hover {
+  transform: translateY(-1px);
+}
+
+.brand-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-.brand-logo img {
-  height: 40px;
-  width: auto;
+.brand-cup-icon {
+  width: 58px;
+  height: 58px;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.45));
+  transition: all var(--transition-smooth);
+}
+
+.site-header.scrolled .brand-cup-icon {
+  width: 50px;
+  height: 50px;
+}
+
+.brand-logo:hover .brand-cup-icon {
+  transform: scale(1.05);
+}
+
+.brand-text-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brand-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.brand-name {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.07em;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  display: inline-block;
+}
+
+.brand-tag {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #E2B77E;
+  background: rgba(197, 155, 103, 0.18);
+  border: 1px solid rgba(197, 155, 103, 0.45);
+  border-radius: var(--radius-full);
+  padding: 0.14rem 0.52rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  display: inline-block;
+}
+
+.brand-subtext {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--color-accent-caramel);
+  line-height: 1;
+  margin-top: 0.28rem;
+  display: block;
+}
+
+/* 2. Compact Rounded Rectangular Search Bar (Header) */
+.header-search-container {
+  display: flex;
+  align-items: center;
+  flex: 0 1 230px;
+  max-width: 240px;
+  margin: 0 0.6rem;
+}
+
+.header-search-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.header-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--color-accent-caramel);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.header-search-input {
+  width: 100%;
+  height: 35px;
+  padding: 0 1.9rem 0 2.05rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(197, 155, 103, 0.28);
+  border-radius: 8px; /* Clean compact rounded rectangle */
+  color: #FAF7F2;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all var(--transition-smooth);
+}
+
+.header-search-input::placeholder {
+  color: rgba(209, 197, 189, 0.7);
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+
+.header-search-input:focus {
+  outline: none;
+  background: rgba(22, 16, 13, 0.96);
+  border-color: var(--color-accent-caramel);
+  box-shadow: 0 0 0 2.5px rgba(197, 155, 103, 0.22), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.header-search-clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: var(--color-text-inverse-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+  transition: all var(--transition-fast);
+}
+
+.header-search-clear-btn:hover {
+  background: var(--color-accent-caramel);
+  color: var(--color-primary-dark);
+}
+
+/* Mobile search sub-row (hidden by default on desktop) */
+.mobile-header-search-bar {
+  display: none;
+  width: 100%;
+  margin-top: 0.45rem;
+}
+
+.mobile-header-search-bar .header-search-wrap {
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.mobile-header-search-bar .header-search-input {
+  height: 32px;
+  padding: 0 1.7rem 0 1.95rem;
+  font-size: 0.78rem;
+  border-radius: 7px;
+  border: 1px solid rgba(197, 155, 103, 0.25);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.mobile-header-search-bar .header-search-input::placeholder {
+  font-size: 0.75rem;
+}
+
+.mobile-header-search-bar .header-search-icon {
+  left: 9px;
+  width: 13px;
+  height: 13px;
+}
+
+.mobile-header-search-bar .header-search-clear-btn {
+  right: 7px;
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
 }
 
 .main-nav {
@@ -1746,12 +1944,34 @@ button, input, select, textarea {
 /* --- Responsive Media Queries --- */
 @media (max-width: 1060px) {
   .site-header {
-    padding: 0.75rem 0;
+    padding: 0.65rem 0 0.75rem 0;
   }
 
   .header-actions .status-pill,
   .header-actions #headerBookBtn {
     display: none;
+  }
+
+  .header-search-container {
+    display: none;
+  }
+
+  .mobile-header-search-bar {
+    display: flex;
+    justify-content: center;
+  }
+
+  .brand-logo {
+    gap: 0.9rem;
+  }
+
+  .brand-cup-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .brand-name {
+    font-size: 1.6rem;
   }
 
   .main-nav {
@@ -1848,16 +2068,34 @@ button, input, select, textarea {
   }
 
   .site-header {
-    padding: 0.65rem 0;
+    padding: 0.65rem 0 0.75rem 0;
+  }
+
+  .header-search-container {
+    display: none;
+  }
+
+  .mobile-header-search-bar {
+    display: flex;
+    justify-content: center;
   }
 
   .brand-logo {
-    height: 42px;
+    gap: 0.85rem;
   }
 
-  .brand-logo img {
-    height: 34px;
-    max-width: 165px;
+  .brand-cup-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .brand-name {
+    font-size: 1.48rem;
+  }
+
+  .brand-subtext {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
   }
 
   .header-actions {
@@ -1871,7 +2109,7 @@ button, input, select, textarea {
 
   /* Hero Section */
   .hero-section {
-    padding-top: 105px;
+    padding-top: 120px;
     padding-bottom: 75px;
     min-height: auto;
   }
@@ -1963,6 +2201,8 @@ button, input, select, textarea {
   .menu-search-wrap {
     max-width: 100%;
     width: 100%;
+    flex: none;
+    height: auto;
   }
 
   .jain-toggle-wrap {
@@ -2152,16 +2392,31 @@ button, input, select, textarea {
   }
 
   .site-header {
-    padding: 0.55rem 0;
+    padding: 0.55rem 0 0.65rem 0;
   }
 
   .brand-logo {
-    height: 36px;
+    gap: 0.75rem;
   }
 
-  .brand-logo img {
-    height: 30px;
-    max-width: 145px;
+  .brand-cup-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .brand-name {
+    font-size: 1.34rem;
+    letter-spacing: 0.05em;
+  }
+
+  .brand-tag {
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+  }
+
+  .brand-subtext {
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
   }
 
   .header-actions {
@@ -2174,8 +2429,25 @@ button, input, select, textarea {
   }
 
   .hero-section {
-    padding-top: 88px;
+    padding-top: 110px;
     padding-bottom: 55px;
+  }
+
+  .mobile-header-search-bar .header-search-wrap {
+    max-width: 250px;
+  }
+
+  .mobile-header-search-bar .header-search-input {
+    height: 30px;
+    padding: 0 1.5rem 0 1.8rem;
+    font-size: 0.76rem;
+    border-radius: 6px;
+  }
+
+  .mobile-header-search-bar .header-search-icon {
+    left: 8px;
+    width: 12px;
+    height: 12px;
   }
 
   .hero-title {
