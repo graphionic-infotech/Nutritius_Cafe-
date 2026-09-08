@@ -76,6 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuCards = document.querySelectorAll('.menu-row-card');
   const searchInput = document.getElementById('menuSearchInput');
   const clearSearchBtn = document.getElementById('clearSearchBtn');
+  const headerSearchInput = document.getElementById('headerSearchInput');
+  const headerClearSearchBtn = document.getElementById('headerClearSearchBtn');
+  const mobileHeaderSearchInput = document.getElementById('mobileHeaderSearchInput');
+  const mobileHeaderClearSearchBtn = document.getElementById('mobileHeaderClearSearchBtn');
   const resultsCount = document.getElementById('resultsCount');
   const resetFiltersBtn = document.getElementById('resetFiltersBtn');
   const emptyState = document.getElementById('menuEmptyState');
@@ -121,6 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (clearSearchBtn) {
       clearSearchBtn.style.display = query ? 'flex' : 'none';
+    }
+    if (headerClearSearchBtn) {
+      headerClearSearchBtn.style.display = query ? 'flex' : 'none';
+    }
+    if (mobileHeaderClearSearchBtn) {
+      mobileHeaderClearSearchBtn.style.display = query ? 'flex' : 'none';
     }
 
     let visibleCount = 0;
@@ -186,6 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     if (jainToggle) jainToggle.checked = false;
     if (searchInput) searchInput.value = '';
+    if (headerSearchInput) headerSearchInput.value = '';
+    if (mobileHeaderSearchInput) mobileHeaderSearchInput.value = '';
     filterMenuItems();
   }
 
@@ -206,15 +218,62 @@ document.addEventListener('DOMContentLoaded', () => {
     jainToggle.addEventListener('change', filterMenuItems);
   }
 
+  function syncSearchInputs(value, sourceEl) {
+    if (searchInput && searchInput !== sourceEl) searchInput.value = value;
+    if (headerSearchInput && headerSearchInput !== sourceEl) headerSearchInput.value = value;
+    if (mobileHeaderSearchInput && mobileHeaderSearchInput !== sourceEl) mobileHeaderSearchInput.value = value;
+    filterMenuItems();
+  }
+
+  function handleSearchKeydown(e) {
+    if (e.key === 'Enter') {
+      const menuSection = document.getElementById('menu');
+      if (menuSection) {
+        menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
   if (searchInput) {
-    searchInput.addEventListener('input', filterMenuItems);
+    searchInput.addEventListener('input', () => syncSearchInputs(searchInput.value, searchInput));
+    searchInput.addEventListener('keydown', handleSearchKeydown);
+  }
+
+  if (headerSearchInput) {
+    headerSearchInput.addEventListener('input', () => syncSearchInputs(headerSearchInput.value, headerSearchInput));
+    headerSearchInput.addEventListener('keydown', handleSearchKeydown);
+  }
+
+  if (mobileHeaderSearchInput) {
+    mobileHeaderSearchInput.addEventListener('input', () => syncSearchInputs(mobileHeaderSearchInput.value, mobileHeaderSearchInput));
+    mobileHeaderSearchInput.addEventListener('keydown', handleSearchKeydown);
+  }
+
+  function clearAllSearch() {
+    if (searchInput) searchInput.value = '';
+    if (headerSearchInput) headerSearchInput.value = '';
+    if (mobileHeaderSearchInput) mobileHeaderSearchInput.value = '';
+    filterMenuItems();
   }
 
   if (clearSearchBtn) {
     clearSearchBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      searchInput.focus();
-      filterMenuItems();
+      clearAllSearch();
+      if (searchInput) searchInput.focus();
+    });
+  }
+
+  if (headerClearSearchBtn) {
+    headerClearSearchBtn.addEventListener('click', () => {
+      clearAllSearch();
+      if (headerSearchInput) headerSearchInput.focus();
+    });
+  }
+
+  if (mobileHeaderClearSearchBtn) {
+    mobileHeaderClearSearchBtn.addEventListener('click', () => {
+      clearAllSearch();
+      if (mobileHeaderSearchInput) mobileHeaderSearchInput.focus();
     });
   }
 
