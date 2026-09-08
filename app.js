@@ -308,18 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const headerBookBtn = document.getElementById('headerBookBtn');
   const closeModalBtn = document.getElementById('closeModalBtn');
   const reservationForm = document.getElementById('reservationForm');
-  const toastMsg = document.getElementById('toastMsg');
-  const toastText = document.getElementById('toastText');
-
-  const showToast = (message) => {
-    if (!toastMsg) return;
-    toastText.textContent = message;
-    toastMsg.classList.add('show');
-    setTimeout(() => {
-      toastMsg.classList.remove('show');
-    }, 4500);
-  };
-
   const mobileBookBtn = document.getElementById('mobileBookBtn');
 
   const openReservationModal = () => {
@@ -371,14 +359,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const diet = document.getElementById('resDiet').value;
         const notes = document.getElementById('resOccasion').value.trim();
 
-        // Close modal
+        // Close modal and reset form cleanly without any success popup
         reservationModal.close();
         reservationForm.reset();
 
-        // Show confirmation toast
-        showToast(`Table booked for ${name} (${guests}) on ${date} at ${time}!`);
-
-        // Optional: Trigger WhatsApp confirmation link in new window
+        // Trigger WhatsApp confirmation link in new window
         const waMsg = encodeURIComponent(
           `Hello Nutritius Cafe! I would like to reserve a table:\n` +
           `• Name: ${name}\n` +
@@ -391,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const waUrl = `https://wa.me/919313815971?text=${waMsg}`;
         setTimeout(() => {
           window.open(waUrl, '_blank');
-        }, 1200);
+        }, 800);
       });
     }
   }
