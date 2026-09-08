@@ -1564,30 +1564,6 @@ button, input, select, textarea {
   box-shadow: 0 0 0 3px rgba(197, 155, 103, 0.2);
 }
 
-/* Toast Notifications */
-.toast-msg {
-  position: fixed;
-  bottom: 92px;
-  right: 24px;
-  background: var(--color-primary-dark);
-  color: var(--color-text-inverse);
-  padding: 0.9rem 1.4rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-accent-caramel);
-  box-shadow: var(--shadow-lg);
-  font-size: 0.92rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  z-index: 2000;
-  transform: translateY(140%);
-  transition: transform var(--transition-smooth);
-}
-
-.toast-msg.show {
-  transform: translateY(0);
-}
 
 /* --- Floating WhatsApp Quick Connect Button --- */
 .whatsapp-float-btn {
@@ -2167,15 +2143,6 @@ button, input, select, textarea {
     display: none;
   }
 
-  /* Toast Msg */
-  .toast-msg {
-    bottom: 84px;
-    right: 18px;
-    left: 18px;
-    justify-content: center;
-    font-size: 0.85rem;
-    padding: 0.8rem 1rem;
-  }
 }
 
 /* Extra Small Phones (iPhone SE, Galaxy S, etc. <= 480px) */
